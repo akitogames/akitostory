@@ -35,12 +35,6 @@ export default function NovelGame() {
 
   const onTypingDone = useCallback(() => {
     setIsTyping(false);
-    const sc = scenes[sceneIdRef.current];
-    if (!sc) return;
-    const isLast = lineIdxRef.current >= sc.lines.length - 1;
-    if (isLast && sc.choices) {
-      setShowChoices(true);
-    }
   }, []);
 
   const startTyping = useCallback((text: string) => {
@@ -114,6 +108,8 @@ export default function NovelGame() {
 
     if (!isLast) {
       setLineIdx(prev => prev + 1);
+    } else if (sc.choices) {
+      setShowChoices(true);
     } else if (sc.autoNext) {
       transitionTo(sc.autoNext);
     }
@@ -134,7 +130,7 @@ export default function NovelGame() {
   const isLastLine = lineIdx >= (scene?.lines.length ?? 0) - 1;
   const isEnd = !!scene?.isEnd && isLastLine && !isTyping;
   const canAdvance = !isTyping && !showChoices && !scene?.isEnd && (
-    !isLastLine || !!scene?.autoNext
+    !isLastLine || !!scene?.autoNext || !!scene?.choices
   );
 
   return (
